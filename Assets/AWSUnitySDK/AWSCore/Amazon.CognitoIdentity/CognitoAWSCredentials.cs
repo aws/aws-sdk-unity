@@ -266,7 +266,7 @@ namespace Amazon.CognitoIdentity
 		{
 			AmazonServiceResult voidResult = new AmazonServiceResult(null, null);
 
-			AmazonServiceCallback refreshCallback;
+			AmazonServiceCallback refreshCallback = null;
 			refreshCallback = delegate(AmazonServiceResult refreshResult)
 			{
 				if (refreshResult.Exception != null)
