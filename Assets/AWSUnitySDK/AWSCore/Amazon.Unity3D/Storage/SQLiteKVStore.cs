@@ -25,7 +25,7 @@ namespace Amazon.Unity3D.Storage
 
         static SQLiteKVStore()
         {
-            SetupDatabase("aws_cognito_cache.db");
+            SetupDatabase(AWSConfigs.CognitoDBName);
         }
 
 
