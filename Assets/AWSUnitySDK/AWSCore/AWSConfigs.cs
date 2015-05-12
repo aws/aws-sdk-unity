@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2014-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *
@@ -590,6 +590,15 @@ namespace Amazon
         }
 
         #endregion
+
+		#region Cognito members
+
+		/// <summary>
+		/// The name of the cognito DB.
+		/// </summary>
+		public static string CognitoDBName = "aws_cognito_cache.db";
+
+		#endregion
 
         #region Internal members
 
