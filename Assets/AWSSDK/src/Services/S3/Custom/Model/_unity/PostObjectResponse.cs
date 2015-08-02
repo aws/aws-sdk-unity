@@ -16,10 +16,13 @@
 //
 
 using Amazon.Runtime;
+using Amazon.Runtime.Internal.Transform;
+using Amazon.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 
 namespace Amazon.S3.Model
 {
@@ -27,5 +30,24 @@ namespace Amazon.S3.Model
     {
         public string RequestId { get; set; }
         public string HostId { get; set; }
+        
+        /// <summary>
+        /// Version of the object.
+        ///  
+        /// </summary>
+        public string VersionId {get; set; }
+        
+        public PostObjectResponse(IWebResponseData response)
+        {
+            HttpStatusCode = response.StatusCode;
+            ContentLength = response.ContentLength;
+
+            if (response.IsHeaderPresent(HeaderKeys.XAmzRequestIdHeader))
+                RequestId = response.GetHeaderValue(HeaderKeys.XAmzRequestIdHeader);
+            if (response.IsHeaderPresent(HeaderKeys.XAmzId2Header))
+                HostId = response.GetHeaderValue(HeaderKeys.XAmzId2Header);
+            if (response.IsHeaderPresent(HeaderKeys.XAmzVersionId))
+                VersionId = response.GetHeaderValue(HeaderKeys.XAmzVersionId);
+        }
     }
 }

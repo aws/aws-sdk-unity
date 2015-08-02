@@ -203,15 +203,7 @@ namespace Amazon.S3
         {
             IAsyncExecutionContext executionContext = result.AsyncState as IAsyncExecutionContext;
             IWebResponseData response = executionContext.ResponseContext.HttpResponse;
-            PostObjectResponse postResponse = new PostObjectResponse();
-            postResponse.HttpStatusCode = response.StatusCode;
-            postResponse.ContentLength = response.ContentLength;
-
-            if (response.IsHeaderPresent(HeaderKeys.XAmzRequestIdHeader))
-                postResponse.RequestId = response.GetHeaderValue(HeaderKeys.XAmzRequestIdHeader);
-            if (response.IsHeaderPresent(HeaderKeys.XAmzId2Header))
-                postResponse.HostId = response.GetHeaderValue(HeaderKeys.XAmzId2Header);
-
+            PostObjectResponse postResponse = new PostObjectResponse(response);
             PostObjectRequest request = executionContext.RequestContext.OriginalRequest as PostObjectRequest;
 
             RuntimeAsyncResult asyncResult = executionContext.ResponseContext.AsyncResult as RuntimeAsyncResult;
