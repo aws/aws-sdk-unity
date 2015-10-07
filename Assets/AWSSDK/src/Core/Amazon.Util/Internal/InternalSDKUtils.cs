@@ -207,18 +207,7 @@ namespace Amazon.Util.Internal
 
         public static void SafeExecute(Action action)
         {
-            try
-            {
-                action();
-            }
-            catch (Exception exception)
-            {
-                // Catch any unhandled exceptions from the user callback 
-                // and log it. 
-                Logger.Error(exception,
-                    "An unhandled exception was thrown from the callback method {0}.",
-                    action.Method.Name);
-            }
+			UnityInitializer.StartDetached(action);
         }
 #endif
 

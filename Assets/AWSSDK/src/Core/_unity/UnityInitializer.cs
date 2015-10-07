@@ -119,6 +119,21 @@ namespace Amazon
             return Thread.CurrentThread.Equals(_mainThread);
         }
 
+		public static void StartDetached(Action lambda)
+		{
+			if(null != _instance)
+			{
+				_instance.StartCoroutine( startDetached(lambda) );
+			}
+		}
+
+		private static IEnumerator startDetached(Action lambda)
+		{
+			yield return null;
+
+			lambda.Invoke();
+		}
+
 #if UNITY_EDITOR
         public static bool IsEditorPlaying
         {
