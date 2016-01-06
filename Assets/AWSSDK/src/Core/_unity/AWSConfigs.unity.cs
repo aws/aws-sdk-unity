@@ -149,7 +149,7 @@ namespace Amazon
                 }
             }
 
-            Logger.ClearLoggerCache();
+			Amazon.Runtime.Internal.Util.Logger.ClearLoggerCache();
         }
 
         // Used by Logger.Diagnostic to add listeners to TraceSources when loggers 
