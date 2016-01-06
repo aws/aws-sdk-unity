@@ -33,6 +33,7 @@ namespace Amazon.S3
 {
     public partial class AmazonS3Client
     {
+		public delegate void AWSRequestCallbackDel(UnityWebRequest webRequest);
 
         #region Post Object
 
@@ -43,30 +44,43 @@ namespace Amazon.S3
         /// For more information, <see href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html"/>
         /// </remarks>
         /// <param name="request">Request object which describes the data to POST</param>
-        public void PostObjectAsync(PostObjectRequest request, AmazonServiceCallback<PostObjectRequest, PostObjectResponse> callback,AsyncOptions options = null)
+        public void PostObjectAsync(PostObjectRequest request, AmazonServiceCallback<PostObjectRequest, PostObjectResponse> callback, AsyncOptions options = null)
         {
-	        options = options == null ? new AsyncOptions() : options;
-           
-
-            Action<AmazonWebServiceRequest, AmazonWebServiceResponse, Exception, AsyncOptions> callbackHelper
-                = (AmazonWebServiceRequest req, AmazonWebServiceResponse res, Exception ex, AsyncOptions ao) =>
-                {
-                    AmazonServiceResult<PostObjectRequest, PostObjectResponse> responseObject
-                        = new AmazonServiceResult<PostObjectRequest, PostObjectResponse>((PostObjectRequest)req,(PostObjectResponse)res,ex,ao.State);
-                    if(callback !=null)
-						callback(responseObject);
-                };
-            ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
-            {
-                // Provide a default policy if user doesn't set it.
-                if (request.SignedPolicy == null)
-                {
-                    CreateSignedPolicy(request);
-                }
-                PostObject(request, options, callbackHelper);
-            }));
-            
+			PostObjectAsync(request, callback, null, options);
         }
+
+		/// <summary>
+		/// Upload data to Amazon S3 using HTTP POST. The requestAssignmentCallback will return the WebRequest object which you can use for monitoring
+		/// </summary>
+		/// <remarks>
+		/// For more information, <see href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html"/>
+		/// </remarks>
+		/// <param name="request">Request object which describes the data to POST</param>
+		public void PostObjectAsync(PostObjectRequest request, AmazonServiceCallback<PostObjectRequest, PostObjectResponse> callback, AWSRequestCallbackDel requestAssignmentCallback, AsyncOptions options = null)
+		{
+			options = options == null ? new AsyncOptions() : options;
+
+
+			Action<AmazonWebServiceRequest, AmazonWebServiceResponse, Exception, AsyncOptions> callbackHelper
+			= (AmazonWebServiceRequest req, AmazonWebServiceResponse res, Exception ex, AsyncOptions ao) =>
+			{
+				AmazonServiceResult<PostObjectRequest, PostObjectResponse> responseObject
+				= new AmazonServiceResult<PostObjectRequest, PostObjectResponse>((PostObjectRequest)req,(PostObjectResponse)res,ex,ao.State);
+				if(callback !=null)
+					callback(responseObject);
+			};
+			ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
+				{
+					// Provide a default policy if user doesn't set it.
+					if (request.SignedPolicy == null)
+					{
+						CreateSignedPolicy(request);
+					}
+
+					PostObject(request, options, callbackHelper, requestAssignmentCallback);
+				}));
+
+		}
 
         private void CreateSignedPolicy(PostObjectRequest request)
         {
@@ -100,7 +114,7 @@ namespace Amazon.S3
             request.SignedPolicy = S3PostUploadSignedPolicy.GetSignedPolicy(policyString, base.Credentials);
         }
 
-        private void PostObject(PostObjectRequest request, AsyncOptions options, Action<AmazonWebServiceRequest, AmazonWebServiceResponse, Exception, AsyncOptions> callbackHelper)
+		private void PostObject(PostObjectRequest request, AsyncOptions options, Action<AmazonWebServiceRequest, AmazonWebServiceResponse, Exception, AsyncOptions> callbackHelper, AWSRequestCallbackDel requestAssignmentCallback )
         {
             string url;
             string subdomain = request.Region.Equals(RegionEndpoint.USEast1) ? "s3" : "s3-" + request.Region.SystemName;
@@ -170,6 +184,11 @@ namespace Amazon.S3
             executionContext.ResponseContext.AsyncResult.Request = executionContext.RequestContext.OriginalRequest;
 
             webRequest.BeginGetResponse(new AsyncCallback(ProcessPostResponse), executionContext);
+
+			if (requestAssignmentCallback != null)
+			{
+				requestAssignmentCallback(webRequest);
+			}
         }
 
         private void ProcessPostResponse(IAsyncResult result)

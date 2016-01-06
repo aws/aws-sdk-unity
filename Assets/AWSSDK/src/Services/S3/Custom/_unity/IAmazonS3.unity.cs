@@ -32,6 +32,15 @@ namespace Amazon.S3
         /// </remarks>
         /// <param name="request">Request object which describes the data to POST</param>
         void PostObjectAsync(PostObjectRequest request,AmazonServiceCallback<PostObjectRequest,PostObjectResponse> callback,  AsyncOptions options = null);
+
+		/// <summary>
+		/// Upload data to Amazon S3 using HTTP POST. The requestAssignmentCallback will return the WebRequest object which you can use for monitoring
+		/// </summary>
+		/// <remarks>
+		/// For more information, <see href="http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html"/>
+		/// </remarks>
+		/// <param name="request">Request object which describes the data to POST</param>
+		void PostObjectAsync(PostObjectRequest request, AmazonServiceCallback<PostObjectRequest, PostObjectResponse> callback, AmazonS3Client.AWSRequestCallbackDel requestAssignmentCallback, AsyncOptions options = null);
         
         #endregion
     }
