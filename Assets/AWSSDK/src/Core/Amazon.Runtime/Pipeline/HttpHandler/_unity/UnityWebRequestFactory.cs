@@ -223,11 +223,6 @@ namespace Amazon.Runtime.Internal
         public void Abort()
         {
             // Not supported by the WWW API. 
-
-			//using the following line would work, but suppose would need to be added to UnityWebResponseData to check for a null WWW object and
-			//then maybe assume it was cancelled?
-			//TODO: consider supporting cancelling a UnityWebRequest
-			//this.WwwRequest.Dispose();
         }
 
         /// <summary>
