@@ -43,7 +43,7 @@ namespace Amazon
 
         private static UnityInitializer _instance = null;
         private static object _lock = new object();
-        private Logger _logger; 
+		private Amazon.Runtime.Internal.Util.Logger _logger; 
         
         #region constructor
         private UnityInitializer(){}

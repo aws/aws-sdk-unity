@@ -36,7 +36,7 @@ namespace Amazon.Runtime.Internal.Transform
         private Stream _responseStream;
         private byte[] _responseBody;
         
-        private ILogger _logger;
+		private Amazon.Runtime.Internal.Util.ILogger _logger;
         /// <summary>
         /// The constructor for UnityWebResponseData.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Amazon.Runtime.Internal.Transform
         /// </param>
         public UnityWebResponseData(WWW wwwRequest)
         {
-            _logger= Logger.GetLogger(this.GetType());
+			_logger= Amazon.Runtime.Internal.Util.Logger.GetLogger(this.GetType());
             _headers = wwwRequest.responseHeaders;
             try
             {

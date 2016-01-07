@@ -31,7 +31,7 @@ namespace Amazon.Util.Internal
     /// </summary>
     public class AmazonHookedPlatformInfo
     {
-        private static Logger _logger = Logger.GetLogger(typeof(AmazonHookedPlatformInfo));
+		private static Amazon.Runtime.Internal.Util.Logger _logger = Amazon.Runtime.Internal.Util.Logger.GetLogger(typeof(AmazonHookedPlatformInfo));
         private const string IPHONE_OS = "iPhone OS";
         private const string ANDROID_OS = "Android";
         

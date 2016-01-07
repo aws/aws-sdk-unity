@@ -31,7 +31,7 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
     public class BackgroundRunner
     {
         private static System.Threading.Thread _thread = null;
-        private static Logger _logger = Logger.GetLogger(typeof(BackgroundRunner));
+		private static Amazon.Runtime.Internal.Util.Logger _logger = Amazon.Runtime.Internal.Util.Logger.GetLogger(typeof(BackgroundRunner));
         private static object _lock = new object();
 
         /// <summary>

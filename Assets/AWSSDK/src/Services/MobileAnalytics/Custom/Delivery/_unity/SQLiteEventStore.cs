@@ -35,7 +35,7 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
 {
     internal class SQLiteEventStore:IEventStore
     {
-        private static Logger _logger = Logger.GetLogger(typeof(SQLiteEventStore));
+		private static Amazon.Runtime.Internal.Util.Logger _logger = Amazon.Runtime.Internal.Util.Logger.GetLogger(typeof(SQLiteEventStore));
         private const String TABLE_NAME = "ma_events";
         private const String EVENT_COLUMN_NAME = "ma_event";
         private const String EVENT_ID_COLUMN_NAME = "ma_event_id";

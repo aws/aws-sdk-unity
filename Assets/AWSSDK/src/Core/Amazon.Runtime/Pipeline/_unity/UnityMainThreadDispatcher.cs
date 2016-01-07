@@ -29,7 +29,10 @@ namespace Amazon.Runtime.Internal
     /// </summary>
     public class UnityMainThreadDispatcher : MonoBehaviour
     {
-        private Logger _logger;
+		private Amazon.Runtime.Internal.Util.Logger _logger;
+
+		private float _nextUpdateTime;
+		private float _updateInterval = 0.1f;
 
         /// <summary>
         /// This method is called called when the script instance is
@@ -37,11 +40,24 @@ namespace Amazon.Runtime.Internal
         /// </summary>
         public void Awake()
         {
-            _logger = Logger.GetLogger(this.GetType());
-            // Call the method to process requests at a regular interval.
-            // TODO : Perf testing to figure out appropriate value for interval.
-            InvokeRepeating("ProcessRequests", 0.1f, 0.1f);
+			_logger = Amazon.Runtime.Internal.Util.Logger.GetLogger(this.GetType());
+			_nextUpdateTime = Time.unscaledTime;
+			_nextUpdateTime = calculateNextUpdateTime();
         }
+
+		void Update()
+		{
+			if (Time.unscaledTime >= _nextUpdateTime)
+			{
+				ProcessRequests();
+				_nextUpdateTime = calculateNextUpdateTime();
+			}
+		}
+
+		float calculateNextUpdateTime()
+		{
+			return _nextUpdateTime + _updateInterval;
+		}
 
         /// <summary>
         /// This method processes queued web requests and user callbacks.
