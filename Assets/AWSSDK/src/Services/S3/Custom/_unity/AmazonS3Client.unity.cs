@@ -58,17 +58,29 @@ namespace Amazon.S3
                 };
             ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
             {
-                // Provide a default policy if user doesn't set it.
-                if (request.SignedPolicy == null)
-                {
-                    CreateSignedPolicy(request);
-                }
-                PostObject(request, options, callbackHelper);
+				bool shouldProceedWithPost = true;
+
+				// Provide a default policy if user doesn't set it.
+				if (request.SignedPolicy == null)
+				{
+					shouldProceedWithPost  = CreateSignedPolicy(request);
+				}
+
+				if (shouldProceedWithPost == true)
+					PostObject(request, options, callbackHelper);
+				else if (callback != null)
+					//call the callback helper with complete failure
+					//TODO: work out a way to get the failed WebResponse object from the GetSignedPolicy call and pass it through here
+					callback(null);
             }));
             
         }
 
-        private void CreateSignedPolicy(PostObjectRequest request)
+		/// <summary>
+		/// Creates a signed policy and assigns it to the request.
+		/// </summary>
+		/// <returns><c>true</c>, if signed policy was created, <c>false</c> otherwise.</returns>
+		private bool CreateSignedPolicy(PostObjectRequest request)
         {
             if (request.ContentType == null)
             {
@@ -98,6 +110,8 @@ namespace Amazon.S3
                     request.Bucket + "\"},[\"starts-with\", \"$key\", \"" + request.Key.Substring(0, position) + "/\"],{\"acl\": \"private\"},[\"eq\", \"$Content-Type\", " + "\"" + request.ContentType + "\"" + "]]}";
             }
             request.SignedPolicy = S3PostUploadSignedPolicy.GetSignedPolicy(policyString, base.Credentials);
+
+			return request.SignedPolicy != null;
         }
 
         private void PostObject(PostObjectRequest request, AsyncOptions options, Action<AmazonWebServiceRequest, AmazonWebServiceResponse, Exception, AsyncOptions> callbackHelper)

@@ -694,7 +694,7 @@ namespace Amazon.Runtime
         #region Override methods
 
         /// <summary>
-        /// Returns an instance of ImmutableCredentials for this instance
+		/// Returns an instance of ImmutableCredentials for this instance, or null if the request failed
         /// </summary>
         /// <returns></returns>
         public override ImmutableCredentials GetCredentials()
@@ -705,10 +705,15 @@ namespace Amazon.Runtime
                 if (ShouldUpdate)
                 {
                     _currentState = GenerateNewCredentials();
-                    UpdateToGeneratedCredentials(_currentState);
+
+					if (_currentState != null)
+						UpdateToGeneratedCredentials(_currentState);
                 }
 
-                return _currentState.Credentials.Copy();
+				if (_currentState != null)
+					return _currentState.Credentials.Copy();
+				else
+					return null;
             }
         }
 

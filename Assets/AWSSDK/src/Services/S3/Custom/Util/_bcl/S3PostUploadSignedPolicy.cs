@@ -44,10 +44,19 @@ namespace Amazon.S3.Util
         /// </summary>
         /// <param name="policy">JSON string representing the policy to sign</param>
         /// <param name="credentials">Credentials to sign the policy with</param>
-        /// <returns>A signed policy object for use with an S3PostUploadRequest.</returns>
+		/// <returns>A signed policy object for use with an S3PostUploadRequest. If the request failed, null is returned</returns>
         public static S3PostUploadSignedPolicy GetSignedPolicy(string policy, AWSCredentials credentials)
         {
-            ImmutableCredentials iCreds = credentials.GetCredentials();
+			ImmutableCredentials iCreds = null;
+
+			try
+			{
+				iCreds = credentials.GetCredentials();
+			}
+			catch
+			{
+				return null;
+			}
 
             var policyBytes = iCreds.UseToken
                 ? addTokenToPolicy(policy, iCreds.Token)
