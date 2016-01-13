@@ -108,7 +108,6 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
                 _duration = _sessionStorage._duration;
                 
                 Resume();
-                _sessionStorage = null;
             }
             else
             {
