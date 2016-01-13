@@ -345,6 +345,17 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager
         #endregion
         
         #region gloablattribute
+
+        /// <summary>
+        /// Returns a copy of the global attributes dictionary
+        /// </summary>
+        /// <returns>A copy of the global attributes dictionary</returns>
+        public static Dictionary<string, string> GetGlobalAttributes() {
+            lock (_globalLock) {
+                return new Dictionary<string, string>(_globalAttributes);
+            }
+        }
+
         /// <summary>
         /// Adds the global attribute, which is valid for all events.
         /// </summary>
@@ -532,6 +543,17 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager
         #endregion
         
         #region globalmetric
+
+        /// <summary>
+        /// Get a copy of the global metrics dictionary
+        /// </summary>
+        /// <returns>A copy of the global metrics dictionary</returns>
+        public static Dictionary<string, double> GetGlobalMetrics() {
+            lock (_globalLock) {
+                return new Dictionary<string, double>(_globalMetrics);
+            }
+        }
+
         /// <summary>
         /// Adds the global metric, which is valid for all events.
         /// </summary>
