@@ -25,6 +25,7 @@ using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Util;
 using System.Threading;
 using Amazon.Util.Internal;
+using System.Collections.Generic;
 
 namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
 {
@@ -68,6 +69,8 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
             public DateTime _preStartTime;
             public string _sessionId;
             public long _duration;
+            public Dictionary<string, string> _globalAttributes;
+            public Dictionary<string, double> _globalMetrics;
         }
         private SessionStorage _sessionStorage = new SessionStorage();
    
@@ -213,6 +216,21 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
             MobileAnalyticsManager.GetInstance(_appid).RecordEvent(customEvent);
         }
         
+        private void AddStoredGlobalAttributesAndMetricsToEvent(CustomEvent customEvent) {
+            if (_sessionStorage != null) {
+                if (_sessionStorage._globalAttributes != null) {
+                    foreach (var globalAttributePair in _sessionStorage._globalAttributes) {
+                        customEvent.AddAttribute(globalAttributePair.Key, globalAttributePair.Value);
+                    }
+                }
+                if (_sessionStorage._globalMetrics != null) {
+                    foreach (var globalMetricPair in _sessionStorage._globalMetrics) {
+                        customEvent.AddMetric(globalMetricPair.Key, globalMetricPair.Value);
+                    }
+                }
+            }
+        }
+
         private void StopSession()
         {
             DateTime currentTime = DateTime.UtcNow;
@@ -226,6 +244,7 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
                 
                 managerEvent.Duration = _duration;
             }
+            AddStoredGlobalAttributesAndMetricsToEvent(managerEvent);
             MobileAnalyticsManager.GetInstance(_appid).RecordEvent(managerEvent);
         }
         
@@ -264,6 +283,7 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
                     
                 customEvent.Duration = _duration;
             }
+            AddStoredGlobalAttributesAndMetricsToEvent(customEvent);
             MobileAnalyticsManager.GetInstance(_appid).RecordEvent(customEvent);
         }
         
@@ -277,6 +297,8 @@ namespace Amazon.MobileAnalytics.MobileAnalyticsManager.Internal
                 _sessionStorage._preStartTime = _preStartTime;
                 _sessionStorage._sessionId = _sessionId;
                 _sessionStorage._duration = _duration;
+                _sessionStorage._globalAttributes = CustomEvent.GetGlobalAttributes();
+                _sessionStorage._globalMetrics = CustomEvent.GetGlobalMetrics();
             }
 
             // store session into file
